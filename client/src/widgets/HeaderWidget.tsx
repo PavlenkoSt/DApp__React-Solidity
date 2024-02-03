@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
 import { ThemeSwitcher } from "@/features/ThemeSwitcher";
+import { responsive } from "@/shared/styles/responsive";
 import Logo from "@/shared/icons/Logo";
 
 export default function HeaderWidget() {
@@ -44,10 +45,17 @@ const LogoWrapper = styled(NavLink)`
   margin-inline-start: 15px;
   margin-inline-end: 20px;
   text-decoration: none;
-  gap: 5px;
+  @media ${responsive.mobileL} {
+    gap: 5px;
+  }
 `;
 
-const LogoTextWrapper = styled.div``;
+const LogoTextWrapper = styled.div`
+  display: none;
+  @media ${responsive.mobileL} {
+    display: block;
+  }
+`;
 
 const LogoText = styled.div`
   color: #fff;
