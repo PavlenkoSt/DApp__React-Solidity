@@ -19,6 +19,6 @@ const Container = styled.div``;
 const Body = styled.div`
   padding: 60px 5px;
   @media ${responsive.mobileL} {
-    padding: 80px 20px;
+    padding: 80px 20px 20px;
   }
 `;
