@@ -2,8 +2,10 @@
   "name": "smart_contracts",
   "version": "1.0.0",
   "main": "index.js",
-  "type": "module",
   "license": "MIT",
+  "scripts": {
+    "test": "npx hardhat test"
+  },
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.4",
     "@nomicfoundation/hardhat-ethers": "^3.0.5",
@@ -17,10 +19,12 @@
     "@types/mocha": ">=9.1.0",
     "chai": "4.3.7",
     "ethereum-waffle": "^3.0.0",
-    "ethers": "^5.0.0",
+    "ethers": "6.0.0",
     "hardhat": "^2.19.5",
     "hardhat-gas-reporter": "^1.0.8",
     "solidity-coverage": "^0.8.1",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "typechain": "^8.3.2",
+    "typescript": "^5.3.3"
   }
 }
