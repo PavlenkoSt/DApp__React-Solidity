@@ -1,11 +1,15 @@
 import { BiLoader } from "react-icons/bi";
 import styled, { keyframes } from "styled-components";
 
-export const Loader = () => {
+interface IProps {
+  color?: string;
+}
+
+export const Loader = ({ color }: IProps) => {
   return (
     <LoadingContainer>
-      <LoadingSpinner />
-      <LoadingText>Loading...</LoadingText>
+      <LoadingSpinner $color={color} />
+      <LoadingText $color={color}>Loading...</LoadingText>
     </LoadingContainer>
   );
 };
@@ -22,14 +26,16 @@ const LoadingContainer = styled.div`
   align-items: center;
 `;
 
-const LoadingSpinner = styled(BiLoader)`
+const LoadingSpinner = styled(BiLoader)<{ $color?: string }>`
   font-size: 30px;
-  color: ${(props) => props.theme.tertiaryColor};
+  color: ${(props) =>
+    props.$color ? props.$color : props.theme.tertiaryColor};
   animation: ${rotate} 1s linear infinite;
 `;
 
-const LoadingText = styled.span`
+const LoadingText = styled.span<{ $color?: string }>`
   margin-left: 10px;
   font-size: 1rem;
-  color: ${(props) => props.theme.tertiaryColor};
+  color: ${(props) =>
+    props.$color ? props.$color : props.theme.tertiaryColor};
 `;

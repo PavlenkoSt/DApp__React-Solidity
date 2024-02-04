@@ -1,28 +1,47 @@
 import styled from "styled-components";
-import { useThemeToken } from "@/features/ThemeSwitcher";
+import Logo from "@/shared/icons/Logo";
 import { ThemeToken } from "@/shared/types/ThemeToken";
 import { responsive } from "@/shared/styles/responsive";
-import Logo from "@/shared/icons/Logo";
+import { useThemeToken } from "@/features/ThemeSwitcher";
+import { useWallet } from "@/features/Wallet/useWallet";
+import { shortAddress } from "@/shared/utils/helpers";
+import { NETWORK_NAME } from "@/shared/utils/constants";
+import { Loader } from "@/shared/ui/Loader";
 
 export default function CreditCardWidget() {
   const { token } = useThemeToken();
+  const { wallet, balance, wrongNetwork, loading } = useWallet();
 
   return (
-    <Container dark={token === ThemeToken.Dark}>
+    <Container $dark={token === ThemeToken.Dark}>
       <Logo width={30} height={30} />
       <Footer>
-        <Address>0x034</Address>
-        <Balance>Etherum</Balance>
+        {loading ? (
+          <LoadingContainer>
+            <Loader color="#fff" />
+          </LoadingContainer>
+        ) : wrongNetwork ? (
+          <WrongNetwork>
+            Wrong network. Please switch to <b>{NETWORK_NAME}</b>
+          </WrongNetwork>
+        ) : (
+          <>
+            {wallet !== null && (
+              <Address>Address: {shortAddress(wallet)}</Address>
+            )}
+            {balance !== null && <Balance>{balance} Ethereum</Balance>}
+          </>
+        )}
       </Footer>
     </Container>
   );
 }
 
-const Container = styled.div<{ dark: boolean }>`
+const Container = styled.div<{ $dark: boolean }>`
   width: 250px;
   height: 150px;
   background: ${(props) =>
-    props.dark
+    props.$dark
       ? `radial-gradient(
     circle,
     rgba(138, 101, 117, 1) 0%,
@@ -59,4 +78,13 @@ const Address = styled.div`
 const Balance = styled.div`
   font-size: 1.2rem;
   font-weight: 600;
+`;
+
+const WrongNetwork = styled.div``;
+
+const LoadingContainer = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
