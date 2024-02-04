@@ -81,24 +81,10 @@ export function WalletContextProvider({ children }: IProps) {
     if (!window.ethereum) return;
 
     const onAccountsChanged = connectToWallet;
-    const onNetworkChanged = (networkId: string) => {
-      const networkIdHex = "0x" + networkId;
-
-      if (networkIdHex !== NETWORK_ID_HEX) {
-        setBalance(null);
-        setWallet(null);
-      } else {
-        connectToWallet();
-      }
-
-      setCurrentNetwork(networkIdHex);
-    };
+    const onNetworkChanged = () => window.location.reload();
 
     window.ethereum.on("accountsChanged", onAccountsChanged);
-    window.ethereum.on(
-      "networkChanged",
-      onNetworkChanged as (...args: unknown[]) => void
-    );
+    window.ethereum.on("networkChanged", onNetworkChanged);
 
     return () => {
       if (!window.ethereum) return;

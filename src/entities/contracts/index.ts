@@ -1,3 +1,3 @@
-import TransactionContract from "#/artifacts/contracts/Transaction.sol/Transaction.json";
+import TransactionsContract from "#/artifacts/contracts/Transactions.sol/Transactions.json";
 
-export { TransactionContract };
+export { TransactionsContract };
