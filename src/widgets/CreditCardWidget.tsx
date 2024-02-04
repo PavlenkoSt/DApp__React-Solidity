@@ -24,7 +24,7 @@ export default function CreditCardWidget() {
   const actualizeBalance = async () => {
     try {
       await getBalance();
-      toast.success("Balance has been actualized");
+      toast.success("Balance has been updated");
     } catch (e) {
       toast.error("Something went wrong. Try reload page");
     }
