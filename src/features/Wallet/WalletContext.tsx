@@ -1,12 +1,13 @@
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useCallback, useEffect, useState } from "react";
 import { ethers } from "ethers";
 import { createStrictContext } from "@/shared/utils/strictContext";
 import { NETWORK_ID_HEX } from "@/shared/utils/constants";
 
 export const WalletContext = createStrictContext<{
   wallet: string | null;
-  connectToWallet: () => void;
-  switchNetwork: () => void;
+  connectToWallet: () => Promise<void>;
+  switchNetwork: () => Promise<void>;
+  getBalance: () => Promise<void>;
   loading: boolean;
   balance: null | number;
   wrongNetwork: boolean;
@@ -73,6 +74,20 @@ export function WalletContextProvider({ children }: IProps) {
     }
   };
 
+  const getBalance = useCallback(async () => {
+    if (wallet && window.ethereum) {
+      const balanceHex = await window.ethereum.request<string>({
+        method: "eth_getBalance",
+        params: [wallet, "latest"],
+      });
+
+      if (balanceHex) {
+        const balanceEth = ethers.formatEther(balanceHex);
+        setBalance(+balanceEth);
+      }
+    }
+  }, [wallet]);
+
   useEffect(() => {
     connectToWallet();
   }, []);
@@ -95,32 +110,19 @@ export function WalletContextProvider({ children }: IProps) {
   }, []);
 
   useEffect(() => {
-    const getBalance = async () => {
-      if (wallet && window.ethereum) {
-        const balanceHex = await window.ethereum.request<string>({
-          method: "eth_getBalance",
-          params: [wallet, "latest"],
-        });
-
-        if (balanceHex) {
-          const balanceEth = ethers.formatEther(balanceHex);
-          setBalance(+balanceEth);
-        }
-      }
-    };
-
     getBalance();
-  }, [wallet]);
+  }, [getBalance]);
 
   return (
     <WalletContext.Provider
       value={{
         wallet,
-        connectToWallet,
         loading,
         balance,
         wrongNetwork,
+        connectToWallet,
         switchNetwork,
+        getBalance,
       }}
     >
       {children}

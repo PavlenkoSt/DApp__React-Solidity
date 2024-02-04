@@ -1,20 +1,41 @@
 import styled from "styled-components";
+import toast from "react-hot-toast";
+import { GrRefresh } from "react-icons/gr";
+import { FiCopy } from "react-icons/fi";
 import Logo from "@/shared/icons/Logo";
 import { ThemeToken } from "@/shared/types/ThemeToken";
 import { responsive } from "@/shared/styles/responsive";
-import { useThemeToken } from "@/features/ThemeSwitcher";
-import { useWallet } from "@/features/Wallet/useWallet";
 import { shortAddress } from "@/shared/utils/helpers";
 import { NETWORK_NAME } from "@/shared/utils/constants";
 import { Loader } from "@/shared/ui/Loader";
+import { useThemeToken } from "@/features/ThemeSwitcher";
+import { useWallet } from "@/features/Wallet/useWallet";
 
 export default function CreditCardWidget() {
   const { token } = useThemeToken();
-  const { wallet, balance, wrongNetwork, loading } = useWallet();
+  const { wallet, balance, wrongNetwork, loading, getBalance } = useWallet();
+
+  const copyWallet = () => {
+    if (!wallet) return;
+    navigator.clipboard.writeText(wallet);
+    toast.success("Wallet address copied");
+  };
+
+  const actualizeBalance = async () => {
+    try {
+      await getBalance();
+      toast.success("Balance has been actualized");
+    } catch (e) {
+      toast.error("Something went wrong. Try reload page");
+    }
+  };
 
   return (
     <Container $dark={token === ThemeToken.Dark}>
-      <Logo width={30} height={30} />
+      <Header>
+        <Logo width={30} height={30} />
+        <Refresh onClick={actualizeBalance} />
+      </Header>
       <Footer>
         {loading ? (
           <LoadingContainer>
@@ -27,7 +48,9 @@ export default function CreditCardWidget() {
         ) : (
           <>
             {wallet !== null && (
-              <Address>Address: {shortAddress(wallet)}</Address>
+              <Address onClick={copyWallet}>
+                Address: {shortAddress(wallet)} <FiCopy />
+              </Address>
             )}
             {balance !== null && <Balance>{balance} Ethereum</Balance>}
           </>
@@ -65,6 +88,17 @@ const Container = styled.div<{ $dark: boolean }>`
   }
 `;
 
+const Header = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const Refresh = styled(GrRefresh)`
+  cursor: pointer;
+  font-size: 1rem;
+`;
+
 const Footer = styled.div`
   margin-bottom: 10px;
 `;
@@ -73,6 +107,9 @@ const Address = styled.div`
   font-size: 0.8rem;
   font-weight: 600;
   margin-bottom: 5px;
+  display: block;
+  float: left;
+  cursor: pointer;
 `;
 
 const Balance = styled.div`
