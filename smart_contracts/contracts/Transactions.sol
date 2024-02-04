@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
-contract Transaction {
+contract Transactions {
   struct TransactionStruct {
     address sender;
     address receiver;

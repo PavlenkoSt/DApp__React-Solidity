@@ -4,7 +4,10 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "test": "npx hardhat test"
+    "test": "npx hardhat test",
+    "compile": "npx hardhat compile",
+    "deploy:localhost": "npx hardhat run --network localhost scripts/deploy.ts",
+    "deploy:sepolia": "npx hardhat run --network sepolia scripts/deploy.ts"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.4",
@@ -19,7 +22,7 @@
     "@types/mocha": ">=9.1.0",
     "chai": "4.3.7",
     "ethereum-waffle": "^3.0.0",
-    "ethers": "6.0.0",
+    "ethers": "6.6.4",
     "hardhat": "^2.19.5",
     "hardhat-gas-reporter": "^1.0.8",
     "solidity-coverage": "^0.8.1",
