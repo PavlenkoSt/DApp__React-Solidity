@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+smart_contracts/.api
+smart_contracts/.account_private_key
