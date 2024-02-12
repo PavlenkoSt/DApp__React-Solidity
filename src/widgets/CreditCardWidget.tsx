@@ -34,7 +34,7 @@ export default function CreditCardWidget() {
     <Container $dark={token === ThemeToken.Dark}>
       <Header>
         <Logo width={30} height={30} />
-        <Refresh onClick={actualizeBalance} />
+        {!!wallet && <Refresh onClick={actualizeBalance} />}
       </Header>
       <Footer>
         {loading ? (

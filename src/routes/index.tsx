@@ -1,11 +1,16 @@
 import styled from "styled-components";
-import GreetingsWidget from "@/widgets/GreetingsWidget";
-import CreditCardWidget from "@/widgets/CreditCardWidget";
+import { createFileRoute } from "@tanstack/react-router";
 import CreateTransactionWidget from "@/widgets/CreateTransactionWidget";
+import CreditCardWidget from "@/widgets/CreditCardWidget";
+import GreetingsWidget from "@/widgets/GreetingsWidget";
 import { PageContainer } from "@/shared/ui/PageContainer";
 import { responsive } from "@/shared/styles/responsive";
 
-export default function Main() {
+export const Route = createFileRoute("/")({
+  component: Index,
+});
+
+function Index() {
   return (
     <PageContainer>
       <Top>

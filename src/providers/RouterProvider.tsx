@@ -1,20 +1,8 @@
-import {
-  Navigate,
-  RouterProvider,
-  createBrowserRouter,
-} from "react-router-dom";
-import MainLayout from "@/layouts/MainLayout";
-import Main from "@/pages/Main";
+import { RouterProvider, createRouter } from "@tanstack/react-router";
 
-const router = createBrowserRouter([
-  {
-    element: <MainLayout />,
-    children: [
-      { path: "/", element: <Main /> },
-      { path: "*", element: <Navigate to="/" /> },
-    ],
-  },
-]);
+import { routeTree } from "../routeTree.gen";
+
+const router = createRouter({ routeTree });
 
 export default function RouterProviderWrapper() {
   return <RouterProvider router={router} />;

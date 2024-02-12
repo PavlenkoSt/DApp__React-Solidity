@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { NavLink } from "react-router-dom";
+import { Link as NavLink } from "@tanstack/react-router";
 import { ThemeSwitcher } from "@/features/ThemeSwitcher";
 import { responsive } from "@/shared/styles/responsive";
 import Logo from "@/shared/icons/Logo";
