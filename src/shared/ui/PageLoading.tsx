@@ -5,7 +5,7 @@ import { Loader } from "./Loader";
 export const PageLoading = () => {
   return (
     <Container>
-      <Loader />
+      <Loader withText />
     </Container>
   );
 };

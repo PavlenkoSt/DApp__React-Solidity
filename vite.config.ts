@@ -8,7 +8,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": "/src",
-      "@@": "/smart_contracts",
+      "#": "/smart_contracts",
     },
   },
 });

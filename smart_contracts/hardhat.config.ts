@@ -2,8 +2,10 @@ import { readFileSync } from "fs";
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 
-const apiKey = readFileSync(".api").toString();
-const account_private_key = readFileSync(".account_private_key").toString();
+const apiKey = readFileSync(".api").toString().trim();
+const account_private_key = readFileSync(".account_private_key")
+  .toString()
+  .trim();
 
 const config: HardhatUserConfig = {
   solidity: "0.8.19",

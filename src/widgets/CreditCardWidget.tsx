@@ -39,7 +39,7 @@ export default function CreditCardWidget() {
       <Footer>
         {loading ? (
           <LoadingContainer>
-            <Loader color="#fff" />
+            <Loader color="#fff" withText />
           </LoadingContainer>
         ) : wrongNetwork ? (
           <WrongNetwork>

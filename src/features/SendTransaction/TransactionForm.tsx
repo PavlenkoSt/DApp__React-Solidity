@@ -1,9 +1,12 @@
 import { useForm, SubmitHandler, SubmitErrorHandler } from "react-hook-form";
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import styled from "styled-components";
+import { ethers } from "ethers";
 import toast from "react-hot-toast";
 import { z } from "zod";
 import { Button } from "@/shared/ui/Button";
+import { transactionContract } from "@/entities/contracts";
 
 const schema = z.object({
   toAddress: z
@@ -17,7 +20,7 @@ const schema = z.object({
     },
     {
       message: "Must be a positive number",
-    }
+    },
   ),
   message: z
     .string()
@@ -32,6 +35,8 @@ const schema = z.object({
 type IForm = z.infer<typeof schema>;
 
 export const TransactionForm = () => {
+  const [loading, setLoading] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -40,8 +45,35 @@ export const TransactionForm = () => {
     resolver: zodResolver(schema),
   });
 
-  const onSubmit: SubmitHandler<IForm> = (data) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<IForm> = async ({
+    toAddress,
+    amount,
+    keyword,
+    message,
+  }) => {
+    if (!window.ethereum) return;
+
+    try {
+      setLoading(true);
+
+      const provider = new ethers.BrowserProvider(window.ethereum);
+
+      const signer = await provider.getSigner();
+
+      await signer.sendTransaction({
+        to: toAddress,
+        value: ethers.parseEther(amount),
+      });
+
+      // transactionContract
+    } catch (e: any) {
+      if (e?.message?.includes("insufficient funds")) {
+        toast.error("insufficient funds");
+      }
+      console.log("e", e);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const onError: SubmitErrorHandler<IForm> = (errors) => {
@@ -94,7 +126,9 @@ export const TransactionForm = () => {
         )}
       </FormGroup>
 
-      <Button type="submit">Send</Button>
+      <Button $variant="primary" type="submit" loading={loading}>
+        Send
+      </Button>
     </FormContainer>
   );
 };

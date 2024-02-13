@@ -3,13 +3,15 @@ import styled, { keyframes } from "styled-components";
 
 interface IProps {
   color?: string;
+  withText?: boolean;
+  size?: number;
 }
 
-export const Loader = ({ color }: IProps) => {
+export const Loader = ({ color, withText, size = 30 }: IProps) => {
   return (
     <LoadingContainer>
-      <LoadingSpinner $color={color} />
-      <LoadingText $color={color}>Loading...</LoadingText>
+      <LoadingSpinner $color={color} size={size} />
+      {withText && <LoadingText $color={color}>Loading...</LoadingText>}
     </LoadingContainer>
   );
 };

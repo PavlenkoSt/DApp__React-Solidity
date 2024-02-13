@@ -17,7 +17,7 @@ export default function GreetingsWidget() {
       </Subtitle>
       {loading ? (
         <LoaderContainer>
-          <Loader />
+          <Loader withText />
         </LoaderContainer>
       ) : wrongNetwork ? (
         <Button onClick={switchNetwork}>
