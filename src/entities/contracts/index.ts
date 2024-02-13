@@ -1,9 +1,15 @@
 import { ethers } from "ethers";
 import TransactionsContract from "#/artifacts/contracts/Transactions.sol/Transactions.json";
+import contractAddressesJson from "#/contractAddresses.json";
+import { ethProvider } from "@/shared/utils/ethProvider";
 
-const transactionContract = new ethers.Contract(
-  "0x971bfe5f1B8Cab4836CB6A6EFBcbBBA63B85167A",
-  TransactionsContract.abi,
-);
+const getTransactionContract = async () => {
+  if (!ethProvider) throw new Error("ethProvider empty");
 
-export { transactionContract };
+  const address = contractAddressesJson.transactions;
+  const signer = await ethProvider.getSigner();
+
+  return new ethers.Contract(address, TransactionsContract.abi, signer);
+};
+
+export { getTransactionContract };

@@ -6,7 +6,8 @@ import { ethers } from "ethers";
 import toast from "react-hot-toast";
 import { z } from "zod";
 import { Button } from "@/shared/ui/Button";
-import { transactionContract } from "@/entities/contracts";
+import { getTransactionContract } from "@/entities/contracts";
+import { useWallet } from "@/features/Wallet/useWallet";
 
 const schema = z.object({
   toAddress: z
@@ -37,9 +38,12 @@ type IForm = z.infer<typeof schema>;
 export const TransactionForm = () => {
   const [loading, setLoading] = useState(false);
 
+  const { getBalance } = useWallet();
+
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<IForm>({
     resolver: zodResolver(schema),
@@ -56,21 +60,31 @@ export const TransactionForm = () => {
     try {
       setLoading(true);
 
-      const provider = new ethers.BrowserProvider(window.ethereum);
+      const value = ethers.parseEther(amount);
 
-      const signer = await provider.getSigner();
+      const transactionContract = await getTransactionContract();
 
-      await signer.sendTransaction({
-        to: toAddress,
-        value: ethers.parseEther(amount),
-      });
+      const transactionHash = await transactionContract.setTransaction(
+        toAddress,
+        message,
+        keyword,
+        { value },
+      );
 
-      // transactionContract
+      toast.success("Transaction sent to blockchain, pending");
+
+      await transactionHash.wait();
+
+      getBalance();
+      reset();
+      toast.success("Transaction success");
     } catch (e: any) {
+      console.error("e", e);
       if (e?.message?.includes("insufficient funds")) {
         toast.error("insufficient funds");
+        return;
       }
-      console.log("e", e);
+      toast.error("Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -93,7 +107,11 @@ export const TransactionForm = () => {
     <FormContainer onSubmit={handleSubmit(onSubmit, onError)}>
       <FormGroup>
         <Label>To Address</Label>
-        <input style={inputStyles} {...register("toAddress")} />
+        <input
+          disabled={loading}
+          style={inputStyles}
+          {...register("toAddress")}
+        />
         {errors.toAddress && (
           <ErrorMessage>{errors.toAddress.message}</ErrorMessage>
         )}
@@ -102,6 +120,7 @@ export const TransactionForm = () => {
       <FormGroup>
         <Label>Amount</Label>
         <input
+          disabled={loading}
           style={inputStyles}
           type="number"
           step="0.001"
@@ -112,7 +131,11 @@ export const TransactionForm = () => {
 
       <FormGroup>
         <Label>Message</Label>
-        <input style={inputStyles} {...register("message")} />
+        <input
+          disabled={loading}
+          style={inputStyles}
+          {...register("message")}
+        />
         {errors.message && (
           <ErrorMessage>{errors.message.message}</ErrorMessage>
         )}
@@ -120,7 +143,11 @@ export const TransactionForm = () => {
 
       <FormGroup>
         <Label>Keyword</Label>
-        <input style={inputStyles} {...register("keyword")} />
+        <input
+          disabled={loading}
+          style={inputStyles}
+          {...register("keyword")}
+        />
         {errors.keyword && (
           <ErrorMessage>{errors.keyword.message}</ErrorMessage>
         )}

@@ -16,6 +16,7 @@ export default function HeaderWidget() {
           </LogoTextWrapper>
         </LogoWrapper>
         <Link to="/">Main</Link>
+        <Link to="/transactions">Transactions</Link>
       </HeaderBlock>
       <HeaderBlock>
         <ThemeSwitcher />
@@ -39,23 +40,19 @@ const HeaderBlock = styled.div`
 `;
 
 const LogoWrapper = styled(NavLink)`
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   margin-inline-start: 15px;
   margin-inline-end: 20px;
   text-decoration: none;
+  gap: 5px;
   @media ${responsive.mobileL} {
-    gap: 5px;
+    display: flex;
   }
 `;
 
-const LogoTextWrapper = styled.div`
-  display: none;
-  @media ${responsive.mobileL} {
-    display: block;
-  }
-`;
+const LogoTextWrapper = styled.div``;
 
 const LogoText = styled.div`
   color: #fff;
