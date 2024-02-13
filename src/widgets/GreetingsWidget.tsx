@@ -32,19 +32,20 @@ export default function GreetingsWidget() {
 
 const Container = styled.div`
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 
   @media ${responsive.tablet} {
     text-align: end;
+    align-items: flex-end;
   }
 `;
 
-const Title = styled.h1`
-  margin-bottom: 10px;
-`;
+const Title = styled.h1``;
 
-const Subtitle = styled.h2`
-  margin-bottom: 10px;
-`;
+const Subtitle = styled.h2``;
 
 const LoaderContainer = styled.div`
   display: flex;
