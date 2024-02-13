@@ -96,16 +96,16 @@ export function WalletContextProvider({ children }: IProps) {
     if (!window.ethereum) return;
 
     const onAccountsChanged = connectToWallet;
-    const onNetworkChanged = () => window.location.reload();
+    const onChainChanged = () => window.location.reload();
 
     window.ethereum.on("accountsChanged", onAccountsChanged);
-    window.ethereum.on("networkChanged", onNetworkChanged);
+    window.ethereum.on("chainChanged", onChainChanged);
 
     return () => {
       if (!window.ethereum) return;
 
       window.ethereum.off("accountsChanged", onAccountsChanged);
-      window.ethereum.off("accountsChanged", onNetworkChanged);
+      window.ethereum.off("chainChanged", onChainChanged);
     };
   }, []);
 
