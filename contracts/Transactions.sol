@@ -13,7 +13,7 @@ contract Transactions {
 
   TransactionStruct[] transactions;
 
-  event Transfer(address from, address to, uint amount, string message, string keyword, uint256 timestamp);
+  event Transfer(address indexed from, address indexed to, uint amount, string message, string keyword, uint256 timestamp);
 
   function setTransaction (address payable to, string memory message, string memory keyword) public payable {
     transactions.push(TransactionStruct(msg.sender, to, msg.value, message, keyword, block.timestamp));
