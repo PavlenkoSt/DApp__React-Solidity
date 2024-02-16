@@ -3,11 +3,11 @@ import { Button } from "@/shared/ui/Button";
 import { Loader } from "@/shared/ui/Loader";
 import { responsive } from "@/shared/styles/responsive";
 import { NETWORK_NAME } from "@/shared/utils/constants";
-import { useWallet } from "@/features/Wallet/useWallet";
+import { useAccount } from "@/features/Account";
 
 export default function GreetingsWidget() {
   const { wallet, connectToWallet, loading, wrongNetwork, switchNetwork } =
-    useWallet();
+    useAccount();
 
   return (
     <Container>

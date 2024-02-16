@@ -1,25 +1,25 @@
 import { useEffect, useState } from "react";
 import styled, { useTheme } from "styled-components";
 import toast from "react-hot-toast";
-import { getTransactionContract } from "@/entities/contracts";
 import { ethProvider } from "@/shared/utils/ethProvider";
 import { Loader } from "@/shared/ui/Loader";
 import { Transaction, ITransaction } from "./index";
 import { responsive } from "@/shared/styles/responsive";
+import { useContracts } from "../Contracts";
 
 export function TransactionList() {
   const [transactions, setTransactions] = useState<ITransaction[]>([]);
   const [loading, setLoading] = useState(true);
 
   const theme = useTheme();
+  const { transactionContract } = useContracts();
 
   useEffect(() => {
-    if (!ethProvider) return;
+    if (!ethProvider || !transactionContract) return;
 
     const getTransactionsFromContract = async () => {
       try {
         setLoading(true);
-        const transactionContract = await getTransactionContract();
         const transactions: ITransaction[] =
           await transactionContract.getAllTransactions();
 

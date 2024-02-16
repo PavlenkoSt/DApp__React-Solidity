@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 import { createStrictContext } from "@/shared/utils/strictContext";
 import { NETWORK_ID_HEX } from "@/shared/utils/constants";
 
-export const WalletContext = createStrictContext<{
+export const AccountContext = createStrictContext<{
   wallet: string | null;
   connectToWallet: () => Promise<void>;
   switchNetwork: () => Promise<void>;
@@ -17,7 +17,7 @@ interface IProps {
   children: ReactNode;
 }
 
-export function WalletContextProvider({ children }: IProps) {
+export function AccountContextProvider({ children }: IProps) {
   const [wallet, setWallet] = useState<string | null>(null);
   const [balance, setBalance] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
@@ -114,7 +114,7 @@ export function WalletContextProvider({ children }: IProps) {
   }, [getBalance]);
 
   return (
-    <WalletContext.Provider
+    <AccountContext.Provider
       value={{
         wallet,
         loading,
@@ -126,6 +126,6 @@ export function WalletContextProvider({ children }: IProps) {
       }}
     >
       {children}
-    </WalletContext.Provider>
+    </AccountContext.Provider>
   );
 }

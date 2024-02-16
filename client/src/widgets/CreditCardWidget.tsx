@@ -9,11 +9,11 @@ import { shortAddress } from "@/shared/utils/helpers";
 import { NETWORK_NAME } from "@/shared/utils/constants";
 import { Loader } from "@/shared/ui/Loader";
 import { useThemeToken } from "@/features/ThemeSwitcher";
-import { useWallet } from "@/features/Wallet/useWallet";
+import { useAccount } from "@/features/Account";
 
 export default function CreditCardWidget() {
   const { token } = useThemeToken();
-  const { wallet, balance, wrongNetwork, loading, getBalance } = useWallet();
+  const { wallet, balance, wrongNetwork, loading, getBalance } = useAccount();
 
   const copyWallet = () => {
     if (!wallet) return;

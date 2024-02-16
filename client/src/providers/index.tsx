@@ -2,17 +2,20 @@ import ThemeProvider from "./ThemeProvider";
 import ToastProvider from "./ToastProvider";
 import RouterProvider from "./RouterProvider";
 import ThemeTokenProvider from "./ThemeTokenProvider";
-import WalletProvider from "./WalletProvider";
+import AccountProvider from "./AccountProvider";
+import ContractsProvider from "./ContractsProvider";
 
 export default function Providers() {
   return (
     <ThemeTokenProvider>
       <ThemeProvider>
-        <WalletProvider>
-          <ToastProvider>
-            <RouterProvider />
-          </ToastProvider>
-        </WalletProvider>
+        <AccountProvider>
+          <ContractsProvider>
+            <ToastProvider>
+              <RouterProvider />
+            </ToastProvider>
+          </ContractsProvider>
+        </AccountProvider>
       </ThemeProvider>
     </ThemeTokenProvider>
   );

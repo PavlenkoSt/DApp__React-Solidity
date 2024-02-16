@@ -1,13 +1,13 @@
 import { useForm, SubmitHandler, SubmitErrorHandler } from "react-hook-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import styled from "styled-components";
 import { ethers } from "ethers";
 import toast from "react-hot-toast";
 import { z } from "zod";
 import { Button } from "@/shared/ui/Button";
-import { getTransactionContract } from "@/entities/contracts";
-import { useWallet } from "@/features/Wallet/useWallet";
+import { useAccount } from "@/features/Account";
+import { useContracts } from "@/features/Contracts";
 
 const schema = z.object({
   toAddress: z
@@ -38,7 +38,8 @@ type IForm = z.infer<typeof schema>;
 export const TransactionForm = () => {
   const [loading, setLoading] = useState(false);
 
-  const { getBalance } = useWallet();
+  const { getBalance } = useAccount();
+  const { transactionContract } = useContracts();
 
   const {
     register,
@@ -55,33 +56,28 @@ export const TransactionForm = () => {
     keyword,
     message,
   }) => {
-    if (!window.ethereum) return;
+    if (!window.ethereum || !transactionContract) return;
 
     try {
       setLoading(true);
 
       const value = ethers.parseEther(amount);
 
-      const transactionContract = await getTransactionContract();
+      await transactionContract.setTransaction(toAddress, message, keyword, {
+        value,
+      });
 
-      const transactionHash = await transactionContract.setTransaction(
-        toAddress,
-        message,
-        keyword,
-        { value },
-      );
-
-      toast.success("Transaction sent to blockchain, pending");
-
-      await transactionHash.wait();
+      toast("Transaction sent to blockchain, pending");
 
       getBalance();
       reset();
-      toast.success("Transaction success");
     } catch (e: any) {
       console.error("e", e);
       if (e?.message?.includes("insufficient funds")) {
         toast.error("insufficient funds");
+        return;
+      }
+      if (e?.message?.includes("user rejected action")) {
         return;
       }
       toast.error("Something went wrong");
@@ -89,6 +85,27 @@ export const TransactionForm = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const listener = (
+      from: string,
+      to: string,
+      amount: string,
+      message: string,
+      keyword: string,
+      timestamp: number,
+    ) => {
+      getBalance();
+      const value = ethers.formatUnits(amount, "ether");
+      toast.success(`${value} ETH successfully sent to ${to}`);
+    };
+
+    transactionContract?.on("Transfer", listener);
+
+    return () => {
+      transactionContract?.off("Transfer", listener);
+    };
+  }, [transactionContract, toast]);
 
   const onError: SubmitErrorHandler<IForm> = (errors) => {
     console.error(errors);

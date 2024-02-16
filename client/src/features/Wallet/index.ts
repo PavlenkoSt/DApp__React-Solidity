@@ -1,1 +1,0 @@
-export { WalletContext } from "./WalletContext";
