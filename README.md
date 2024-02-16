@@ -1,4 +1,4 @@
-Simplest quick web3 project
+Simplest Hardhat Project
 
 The following technologies are used:
 
@@ -8,3 +8,5 @@ The following technologies are used:
 - react + vite
 - tanstack router
 - styled-component
+
+Deploy contracts and run react app

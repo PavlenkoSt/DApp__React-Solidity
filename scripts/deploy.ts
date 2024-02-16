@@ -2,7 +2,8 @@ import { ethers } from "hardhat";
 import fs from "fs/promises";
 
 async function saveDeployedAddress(json: string) {
-  await fs.writeFile("contractAddresses.json", json, { encoding: "utf-8" });
+  const path = "client/src/entities/contracts/contractAddresses.json";
+  await fs.writeFile(path, json, { encoding: "utf-8" });
 }
 
 async function main() {

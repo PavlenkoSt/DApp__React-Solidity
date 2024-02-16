@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
-import TransactionsContract from "#/artifacts/contracts/Transactions.sol/Transactions.json";
-import contractAddressesJson from "#/contractAddresses.json";
 import { ethProvider } from "@/shared/utils/ethProvider";
+import TransactionsContract from "./artifacts/contracts/Transactions.sol/Transactions.json";
+import contractAddressesJson from "./contractAddresses.json";
 
 const getTransactionContract = async () => {
   if (!ethProvider) throw new Error("ethProvider empty");
