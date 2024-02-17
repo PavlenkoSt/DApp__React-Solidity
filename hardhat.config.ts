@@ -8,7 +8,9 @@ const config: HardhatUserConfig = {
     artifacts: "client/src/entities/contracts/artifacts",
   },
   networks: {
-    hardhat: {},
+    hardhat: {
+      chainId: 1337,
+    },
     sepolia: {
       url: "https://sepolia.infura.io/v3/" + process.env.API_KEY,
       accounts: [process.env.PRIVATE_KEY as string],

@@ -6,6 +6,7 @@
   "scripts": {
     "test": "npx hardhat test",
     "compile": "npx hardhat compile",
+    "h:node": "npx hardhat node",
     "deploy:localhost": "npx hardhat run --network localhost scripts/deploy.ts",
     "deploy:sepolia": "npx hardhat run --network sepolia scripts/deploy.ts"
   },
