@@ -15,8 +15,6 @@ const Container = styled.div`
   padding: 20px 10px;
   border-radius: 10px;
   box-shadow: 0px 0px 15px -0 rgba(0, 0, 0, 0.54);
-  max-width: 600px;
-  margin: auto;
 `;
 
 const Title = styled.h2`

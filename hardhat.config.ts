@@ -10,6 +10,7 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       chainId: 1337,
+      initialBaseFeePerGas: 0,
     },
     sepolia: {
       url: "https://sepolia.infura.io/v3/" + process.env.API_KEY,

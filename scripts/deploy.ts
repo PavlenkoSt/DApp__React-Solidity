@@ -21,6 +21,8 @@ async function main() {
 
   await tokenMarketplace.waitForDeployment();
 
+  await coffeeToken.registerMarketplace(tokenMarketplace);
+
   const transactionsAddress = await transcations.getAddress();
   const coffeeTokenAddress = await coffeeToken.getAddress();
   const tokenMarketplaceAddress = await tokenMarketplace.getAddress();

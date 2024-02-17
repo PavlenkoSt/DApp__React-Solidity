@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import CreateTransactionWidget from "@/widgets/CreateTransactionWidget";
 import CreditCardWidget from "@/widgets/CreditCardWidget";
 import GreetingsWidget from "@/widgets/GreetingsWidget";
+import CoffeTokensWidget from "@/widgets/CoffeTokensWidget";
 import { PageContainer } from "@/shared/ui/PageContainer";
 import { responsive } from "@/shared/styles/responsive";
 
@@ -21,7 +22,10 @@ function Index() {
           <CreditCardWidget />
         </CardContainer>
       </Top>
-      <CreateTransactionWidget />
+      <Forms>
+        <CreateTransactionWidget />
+        <CoffeTokensWidget />
+      </Forms>
     </PageContainer>
   );
 }
@@ -35,6 +39,16 @@ const Top = styled.div`
   @media ${responsive.tablet} {
     flex-direction: row;
     gap: 60px;
+  }
+`;
+
+const Forms = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+
+  @media ${responsive.tablet} {
+    grid-template-columns: 1fr 1fr;
   }
 `;
 

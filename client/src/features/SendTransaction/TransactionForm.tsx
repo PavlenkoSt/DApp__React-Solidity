@@ -68,8 +68,6 @@ export const TransactionForm = () => {
       });
 
       toast("Transaction sent to blockchain, pending");
-
-      getBalance();
       reset();
     } catch (e: any) {
       console.error("e", e);
