@@ -6,10 +6,11 @@ import Logo from "@/shared/icons/Logo";
 import { ThemeToken } from "@/shared/types/ThemeToken";
 import { responsive } from "@/shared/styles/responsive";
 import { shortAddress } from "@/shared/utils/helpers";
-import { NETWORK_NAME } from "@/shared/utils/constants";
 import { Loader } from "@/shared/ui/Loader";
 import { useThemeToken } from "@/features/ThemeSwitcher";
 import { useAccount } from "@/features/Account";
+
+const NETWORK_NAME = import.meta.env.VITE_NETWORK_NAME;
 
 export default function CreditCardWidget() {
   const { token } = useThemeToken();

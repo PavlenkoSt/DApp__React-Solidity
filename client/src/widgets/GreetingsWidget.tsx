@@ -2,8 +2,9 @@ import styled from "styled-components";
 import { Button } from "@/shared/ui/Button";
 import { Loader } from "@/shared/ui/Loader";
 import { responsive } from "@/shared/styles/responsive";
-import { NETWORK_NAME } from "@/shared/utils/constants";
 import { useAccount } from "@/features/Account";
+
+const NETWORK_NAME = import.meta.env.VITE_NETWORK_NAME;
 
 export default function GreetingsWidget() {
   const { wallet, connectToWallet, loading, wrongNetwork, switchNetwork } =

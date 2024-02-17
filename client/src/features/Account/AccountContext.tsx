@@ -1,7 +1,8 @@
 import { ReactNode, useCallback, useEffect, useState } from "react";
 import { ethers } from "ethers";
 import { createStrictContext } from "@/shared/utils/strictContext";
-import { NETWORK_ID_HEX } from "@/shared/utils/constants";
+
+const NETWORK_ID_HEX = import.meta.env.VITE_NETWORK_ID_HEX;
 
 export const AccountContext = createStrictContext<{
   wallet: string | null;
