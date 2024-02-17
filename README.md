@@ -4,7 +4,7 @@ The following technologies are used:
 
 - hardhat
 - solidity
-- ethers
+- wagmi + viem
 - react + vite
 - tanstack router
 - styled-component
