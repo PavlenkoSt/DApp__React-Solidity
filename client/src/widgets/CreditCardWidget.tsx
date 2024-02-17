@@ -47,14 +47,14 @@ export default function CreditCardWidget() {
             Wrong network. Please switch to <b>{NETWORK_NAME}</b>
           </WrongNetwork>
         ) : (
-          <>
+          <WalletInfo>
             {wallet !== null && (
               <Address onClick={copyWallet}>
                 Address: {shortAddress(wallet)} <FiCopy />
               </Address>
             )}
             {balance !== null && <Balance>{balance} Ethereum</Balance>}
-          </>
+          </WalletInfo>
         )}
       </Footer>
     </Container>
@@ -102,6 +102,11 @@ const Refresh = styled(GrRefresh)`
 
 const Footer = styled.div`
   margin-bottom: 10px;
+`;
+
+const WalletInfo = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
 
 const Address = styled.div`
