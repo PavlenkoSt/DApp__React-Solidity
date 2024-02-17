@@ -9,7 +9,7 @@ export default function ToastProvider({ children }: IProps) {
   return (
     <>
       {children}
-      <Toaster position="top-center" reverseOrder={false} />
+      <Toaster position="bottom-center" reverseOrder={false} />
     </>
   );
 }

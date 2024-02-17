@@ -33,6 +33,7 @@ const Header = styled.header`
   backdrop-filter: blur(5px);
   position: fixed;
   width: 100%;
+  z-index: 100000;
 `;
 
 const HeaderBlock = styled.div`

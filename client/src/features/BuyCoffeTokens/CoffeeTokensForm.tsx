@@ -1,37 +1,37 @@
 import { useForm, SubmitHandler, SubmitErrorHandler } from "react-hook-form";
-import { Dispatch, SetStateAction, useState } from "react";
-import { ContractTransactionResponse } from "ethers";
+import { useEffect, useState } from "react";
+import { useWaitForTransactionReceipt } from "wagmi";
+import { BaseError } from "viem";
 import { zodResolver } from "@hookform/resolvers/zod";
 import styled from "styled-components";
 import toast from "react-hot-toast";
-import { z } from "zod";
 import { Button } from "@/shared/ui/Button";
-import { useContracts } from "@/features/Contracts";
+import { ITransactionHash } from "@/shared/types/TransactionHash";
+import { useWritePurchaseTokens } from "@/features/Contracts";
+import { useCurrentBalance } from "@/features/Account";
+import { IForm, schema } from "./index";
 
-const schema = z.object({
-  amount: z.string().refine(
-    (value) => {
-      const number = Number(value);
-      return !isNaN(number) && number > 0;
-    },
-    {
-      message: "Must be a positive number",
-    },
-  ),
-});
+export const CoffeeTokensForm = () => {
+  const { purchase, hash, isPending, error } = useWritePurchaseTokens();
 
-type IForm = z.infer<typeof schema>;
+  const { isLoading, isSuccess } = useWaitForTransactionReceipt({
+    hash,
+  });
 
-interface IProps {
-  setTransactionHash: Dispatch<
-    SetStateAction<ContractTransactionResponse | null>
-  >;
-}
+  const { balance } = useCurrentBalance();
 
-export const CoffeeTokensForm = ({ setTransactionHash }: IProps) => {
-  const [loading, setLoading] = useState(false);
+  const [hashes, setHashes] = useState<ITransactionHash[]>([]);
 
-  const { tokenMarketplaceContract } = useContracts();
+  const loading = isPending || isLoading;
+
+  useEffect(() => {
+    if (isSuccess && hash && !hashes.includes(hash)) {
+      setHashes((prev) => [...prev, hash]);
+      toast("Request sent");
+      balance.refetch();
+      reset();
+    }
+  }, [isSuccess, hash, hashes]);
 
   const {
     register,
@@ -43,38 +43,7 @@ export const CoffeeTokensForm = ({ setTransactionHash }: IProps) => {
   });
 
   const onSubmit: SubmitHandler<IForm> = async ({ amount }) => {
-    if (!window.ethereum || !tokenMarketplaceContract) return;
-
-    try {
-      setLoading(true);
-
-      const priceInWei =
-        (await tokenMarketplaceContract.priceInWei()) as unknown as string;
-
-      if (!priceInWei) throw new Error("Price not found");
-
-      const value = Number(priceInWei) * +amount;
-
-      const hash = await tokenMarketplaceContract.purchaseTokens(amount, {
-        value,
-      });
-
-      setTransactionHash(hash);
-
-      reset();
-    } catch (e: any) {
-      console.error("e", e);
-      if (e?.message?.includes("insufficient funds")) {
-        toast.error("insufficient funds");
-        return;
-      }
-      if (e?.message?.includes("user rejected action")) {
-        return;
-      }
-      toast.error("Something went wrong");
-    } finally {
-      setLoading(false);
-    }
+    purchase({ amount });
   };
 
   const onError: SubmitErrorHandler<IForm> = (errors) => {
@@ -104,6 +73,10 @@ export const CoffeeTokensForm = ({ setTransactionHash }: IProps) => {
         {errors.amount && <ErrorMessage>{errors.amount.message}</ErrorMessage>}
       </FormGroup>
 
+      {!!error && (
+        <Error>{(error as BaseError).shortMessage || error.message}</Error>
+      )}
+
       <Button $variant="primary" type="submit" loading={loading}>
         Buy
       </Button>
@@ -132,4 +105,10 @@ const ErrorMessage = styled.span`
   color: red;
   font-size: 14px;
   margin: 0 5px;
+`;
+
+const Error = styled.div`
+  color: red;
+  font-size: 14px;
+  margin-bottom: 20px;
 `;

@@ -1,59 +1,51 @@
+import { useAccount } from "wagmi";
 import styled from "styled-components";
 import toast from "react-hot-toast";
-import { GrRefresh } from "react-icons/gr";
 import { FiCopy } from "react-icons/fi";
 import Logo from "@/shared/icons/Logo";
+import { Loader } from "@/shared/ui/Loader";
 import { ThemeToken } from "@/shared/types/ThemeToken";
 import { responsive } from "@/shared/styles/responsive";
 import { shortAddress } from "@/shared/utils/helpers";
-import { Loader } from "@/shared/ui/Loader";
 import { useThemeToken } from "@/features/ThemeSwitcher";
-import { useAccount } from "@/features/Account";
+import { useCurrentBalance } from "@/features/Account";
 
-const NETWORK_NAME = import.meta.env.VITE_NETWORK_NAME;
+const NETWORK_NAME = import.meta.env.VITE_NETWORK_ID;
 
 export default function CreditCardWidget() {
   const { token } = useThemeToken();
-  const { wallet, balance, wrongNetwork, loading, getBalance } = useAccount();
+
+  const { address, isConnecting, chainId } = useAccount();
+  const { eth, balance } = useCurrentBalance();
+
+  const isWrongNetwork = String(chainId) !== String(NETWORK_NAME);
 
   const copyWallet = () => {
-    if (!wallet) return;
-    navigator.clipboard.writeText(wallet);
+    if (!address) return;
+    navigator.clipboard.writeText(address);
     toast.success("Wallet address copied");
-  };
-
-  const actualizeBalance = async () => {
-    try {
-      await getBalance();
-      toast.success("Balance has been updated");
-    } catch (e) {
-      toast.error("Something went wrong. Try reload page");
-    }
   };
 
   return (
     <Container $dark={token === ThemeToken.Dark}>
       <Header>
         <Logo width={30} height={30} />
-        {!!wallet && <Refresh onClick={actualizeBalance} />}
       </Header>
       <Footer>
-        {loading ? (
+        {isConnecting ? (
           <LoadingContainer>
             <Loader color="#fff" withText />
           </LoadingContainer>
-        ) : wrongNetwork ? (
-          <WrongNetwork>
-            Wrong network. Please switch to <b>{NETWORK_NAME}</b>
-          </WrongNetwork>
+        ) : isWrongNetwork ? (
+          <></>
         ) : (
           <WalletInfo>
-            {wallet !== null && (
+            {address !== null && (
               <Address onClick={copyWallet}>
-                Address: {shortAddress(wallet)} <FiCopy />
+                Address: {shortAddress(address || "")} <FiCopy />
               </Address>
             )}
-            {balance !== null && <Balance>{balance} Ethereum</Balance>}
+            {balance.isSuccess && <Balance>{eth} Ethereum</Balance>}
           </WalletInfo>
         )}
       </Footer>
@@ -95,11 +87,6 @@ const Header = styled.div`
   justify-content: space-between;
 `;
 
-const Refresh = styled(GrRefresh)`
-  cursor: pointer;
-  font-size: 1rem;
-`;
-
 const Footer = styled.div`
   margin-bottom: 10px;
 `;
@@ -122,8 +109,6 @@ const Balance = styled.div`
   font-size: 1.2rem;
   font-weight: 600;
 `;
-
-const WrongNetwork = styled.div``;
 
 const LoadingContainer = styled.div`
   flex: 1;

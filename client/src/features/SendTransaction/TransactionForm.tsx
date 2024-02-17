@@ -1,45 +1,37 @@
 import { useForm, SubmitHandler, SubmitErrorHandler } from "react-hook-form";
-import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useWaitForTransactionReceipt } from "wagmi";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { ethers } from "ethers";
 import toast from "react-hot-toast";
-import { z } from "zod";
+import { BaseError } from "viem";
 import { Button } from "@/shared/ui/Button";
-import { useAccount } from "@/features/Account";
-import { useContracts } from "@/features/Contracts";
-
-const schema = z.object({
-  toAddress: z
-    .string()
-    .min(42, { message: "Invalid address" })
-    .max(42, { message: "Invalid address" }),
-  amount: z.string().refine(
-    (value) => {
-      const number = Number(value);
-      return !isNaN(number) && number > 0;
-    },
-    {
-      message: "Must be a positive number",
-    },
-  ),
-  message: z
-    .string()
-    .min(1, { message: "Required" })
-    .max(200, { message: "Max 200 characters" }),
-  keyword: z
-    .string()
-    .min(1, { message: "Required" })
-    .max(20, { message: "Max 20 characters" }),
-});
-
-type IForm = z.infer<typeof schema>;
+import { ITransactionHash } from "@/shared/types/TransactionHash";
+import { useWriteTransaction } from "@/features/Contracts";
+import { useCurrentBalance } from "@/features/Account";
+import { schema, IForm } from "./index";
 
 export const TransactionForm = () => {
-  const [loading, setLoading] = useState(false);
+  const { sendTransaction, hash, error, isPending } = useWriteTransaction();
 
-  const { getBalance } = useAccount();
-  const { transactionContract } = useContracts();
+  const { isLoading, isSuccess } = useWaitForTransactionReceipt({
+    hash,
+  });
+
+  const { balance } = useCurrentBalance();
+
+  const [hashes, setHashes] = useState<ITransactionHash[]>([]);
+
+  const loading = isPending || isLoading;
+
+  useEffect(() => {
+    if (isSuccess && hash && !hashes.includes(hash)) {
+      setHashes((prev) => [...prev, hash]);
+      toast("Transaction sent to blockchain");
+      balance.refetch();
+      reset();
+    }
+  }, [isSuccess, hash, hashes]);
 
   const {
     register,
@@ -56,54 +48,8 @@ export const TransactionForm = () => {
     keyword,
     message,
   }) => {
-    if (!window.ethereum || !transactionContract) return;
-
-    try {
-      setLoading(true);
-
-      const value = ethers.parseEther(amount);
-
-      await transactionContract.setTransaction(toAddress, message, keyword, {
-        value,
-      });
-
-      toast("Transaction sent to blockchain, pending");
-      reset();
-    } catch (e: any) {
-      console.error("e", e);
-      if (e?.message?.includes("insufficient funds")) {
-        toast.error("insufficient funds");
-        return;
-      }
-      if (e?.message?.includes("user rejected action")) {
-        return;
-      }
-      toast.error("Something went wrong");
-    } finally {
-      setLoading(false);
-    }
+    sendTransaction({ toAddress, amount, keyword, message });
   };
-
-  useEffect(() => {
-    const listener = (
-      from: string,
-      to: string,
-      amount: string,
-      message: string,
-      keyword: string,
-      timestamp: number,
-    ) => {
-      getBalance();
-      const value = ethers.formatUnits(amount, "ether");
-      toast.success(`${value} ETH successfully sent to ${to}`);
-    };
-
-    transactionContract?.on("Transfer", listener);
-
-    return () => {
-      transactionContract?.off("Transfer", listener);
-    };
-  }, [transactionContract, toast]);
 
   const onError: SubmitErrorHandler<IForm> = (errors) => {
     console.error(errors);
@@ -135,7 +81,7 @@ export const TransactionForm = () => {
       <FormGroup>
         <Label>Amount</Label>
         <input
-          disabled={loading}
+          disabled={isLoading}
           style={inputStyles}
           type="number"
           step="0.001"
@@ -147,7 +93,7 @@ export const TransactionForm = () => {
       <FormGroup>
         <Label>Message</Label>
         <input
-          disabled={loading}
+          disabled={isLoading}
           style={inputStyles}
           {...register("message")}
         />
@@ -159,7 +105,7 @@ export const TransactionForm = () => {
       <FormGroup>
         <Label>Keyword</Label>
         <input
-          disabled={loading}
+          disabled={isLoading}
           style={inputStyles}
           {...register("keyword")}
         />
@@ -167,6 +113,10 @@ export const TransactionForm = () => {
           <ErrorMessage>{errors.keyword.message}</ErrorMessage>
         )}
       </FormGroup>
+
+      {!!error && (
+        <Error>{(error as BaseError).shortMessage || error.message}</Error>
+      )}
 
       <Button $variant="primary" type="submit" loading={loading}>
         Send
@@ -196,4 +146,10 @@ const ErrorMessage = styled.span`
   color: red;
   font-size: 14px;
   margin: 0 5px;
+`;
+
+const Error = styled.div`
+  color: red;
+  font-size: 14px;
+  margin-bottom: 20px;
 `;

@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import CreateTransactionWidget from "@/widgets/CreateTransactionWidget";
 import CreditCardWidget from "@/widgets/CreditCardWidget";
 import GreetingsWidget from "@/widgets/GreetingsWidget";
-import CoffeTokensWidget from "@/widgets/CoffeTokensWidget";
+import CoffeeTokensWidget from "@/widgets/CoffeeTokensWidget";
 import { PageContainer } from "@/shared/ui/PageContainer";
 import { responsive } from "@/shared/styles/responsive";
 
@@ -24,7 +24,7 @@ function Index() {
       </Top>
       <Forms>
         <CreateTransactionWidget />
-        <CoffeTokensWidget />
+        <CoffeeTokensWidget />
       </Forms>
     </PageContainer>
   );

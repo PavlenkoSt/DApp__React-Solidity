@@ -1,52 +1,28 @@
-import { useEffect, useState } from "react";
 import styled, { useTheme } from "styled-components";
-import toast from "react-hot-toast";
-import { ethProvider } from "@/shared/utils/ethProvider";
 import { Loader } from "@/shared/ui/Loader";
-import { Transaction, ITransaction } from "./index";
 import { responsive } from "@/shared/styles/responsive";
-import { useContracts } from "../Contracts";
+import { useReadAllTransactions } from "@/features/Contracts";
+import { Transaction } from "./index";
 
 export function TransactionList() {
-  const [transactions, setTransactions] = useState<ITransaction[]>([]);
-  const [loading, setLoading] = useState(true);
-
   const theme = useTheme();
-  const { transactionContract } = useContracts();
 
-  useEffect(() => {
-    if (!ethProvider || !transactionContract) return;
-
-    const getTransactionsFromContract = async () => {
-      try {
-        setLoading(true);
-        const transactions: ITransaction[] =
-          await transactionContract.getAllTransactions();
-
-        setTransactions(transactions);
-      } catch (e) {
-        toast.error("Something went wrong");
-        console.error(e);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getTransactionsFromContract();
-  }, []);
+  const { transactions, isLoading, isError } = useReadAllTransactions();
 
   return (
     <Container>
-      {loading ? (
+      {isLoading ? (
         <Loader color={theme.primaryColor} withText />
-      ) : !transactions.length ? (
+      ) : isError ? (
+        <EmptyMessage>Something went wrong</EmptyMessage>
+      ) : !transactions?.length ? (
         <EmptyMessage>No transactions yet</EmptyMessage>
       ) : (
         <TransactionsContainer>
           {transactions.map((transaction, idx) => (
             <Transaction
               transaction={transaction}
-              key={transaction[5] || idx}
+              key={transaction.timestamp || idx}
             />
           ))}
         </TransactionsContainer>

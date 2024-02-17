@@ -1,14 +1,31 @@
+import { useConnect, useAccount } from "wagmi";
 import styled from "styled-components";
+import toast from "react-hot-toast";
 import { Button } from "@/shared/ui/Button";
 import { Loader } from "@/shared/ui/Loader";
 import { responsive } from "@/shared/styles/responsive";
-import { useAccount } from "@/features/Account";
 
 const NETWORK_NAME = import.meta.env.VITE_NETWORK_NAME;
+const NETWORK_ID = import.meta.env.VITE_NETWORK_ID;
 
 export default function GreetingsWidget() {
-  const { wallet, connectToWallet, loading, wrongNetwork, switchNetwork } =
-    useAccount();
+  const { isConnected, isConnecting, chainId, connector } = useAccount();
+
+  const { connectors, connect } = useConnect();
+
+  const isWrongChain = String(chainId) !== String(NETWORK_ID);
+
+  const injectedConnector = connectors[0];
+
+  const switchChain = async () => {
+    if (!connector?.switchChain) return;
+
+    try {
+      await connector!.switchChain({ chainId: +NETWORK_ID });
+    } catch (e) {
+      toast.error("Something went wrong, try change chain manually");
+    }
+  };
 
   return (
     <Container>
@@ -16,16 +33,24 @@ export default function GreetingsWidget() {
       <Subtitle>
         Explore the crypto world. Buy and sell cryptocurrencies easily.
       </Subtitle>
-      {loading ? (
+      {isConnecting ? (
         <LoaderContainer>
           <Loader withText />
         </LoaderContainer>
-      ) : wrongNetwork ? (
-        <Button onClick={switchNetwork}>
-          Switch network to {NETWORK_NAME}
+      ) : isWrongChain ? (
+        <>
+          {!connector?.switchChain ? (
+            <div> Switch network to {NETWORK_NAME}</div>
+          ) : (
+            <Button onClick={switchChain}>
+              Switch network to {NETWORK_NAME}
+            </Button>
+          )}
+        </>
+      ) : !isConnected ? (
+        <Button onClick={() => connect({ connector: injectedConnector })}>
+          Connect your account
         </Button>
-      ) : !wallet ? (
-        <Button onClick={connectToWallet}>Connect your account</Button>
       ) : null}
     </Container>
   );

@@ -1,16 +1,16 @@
+import { formatEther } from "viem";
 import styled from "styled-components";
 import { ITransaction } from "./index";
-import { ethers } from "ethers";
 
 interface IProps {
   transaction: ITransaction;
 }
 
 export function Transaction({ transaction }: IProps) {
-  const [from, to, amount, message, keyword, timestamp] = transaction;
+  const { receiver, sender, amount, message, keyword, timestamp } = transaction;
 
-  const eth = ethers.formatEther(amount.toString()).toString();
-  const date = new Date(Number(timestamp)).toLocaleString();
+  const eth = formatEther(BigInt(amount)).toString();
+  const date = new Date(Number(timestamp) * 1000).toLocaleString();
 
   return (
     <Container>
@@ -19,10 +19,10 @@ export function Transaction({ transaction }: IProps) {
           Date: <TextValue>{date}</TextValue>
         </TextItem>
         <TextItem>
-          From: <TextValue>{from}</TextValue>
+          From: <TextValue>{sender}</TextValue>
         </TextItem>
         <TextItem>
-          To: <TextValue>{to}</TextValue>
+          To: <TextValue>{receiver}</TextValue>
         </TextItem>
         <TextItem>
           Amount: <TextValue>{eth} ETH</TextValue>

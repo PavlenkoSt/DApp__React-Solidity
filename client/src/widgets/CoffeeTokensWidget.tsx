@@ -1,22 +1,14 @@
-import { useState } from "react";
 import styled from "styled-components";
-import { ContractTransactionResponse } from "ethers";
 import { CoffeeTokensForm } from "@/features/BuyCoffeTokens";
 import { CoffeeTokensBalance } from "@/features/CoffeeTokensBalance/CoffeeTokensBalance";
 
-export default function CoffeTokensWidget() {
-  const [transactionHash, setTransactionHash] =
-    useState<ContractTransactionResponse | null>(null);
-
+export default function CoffeeTokensWidget() {
   return (
     <Container>
       <Title>Coffee tokens</Title>
-      <CoffeeTokensBalance
-        transactionHash={transactionHash}
-        setTransactionHash={setTransactionHash}
-      />
+      <CoffeeTokensBalance />
       <Title>Buy coffee tokens</Title>
-      <CoffeeTokensForm setTransactionHash={setTransactionHash} />
+      <CoffeeTokensForm />
     </Container>
   );
 }
